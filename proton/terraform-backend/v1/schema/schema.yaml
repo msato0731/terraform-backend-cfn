@@ -1,0 +1,16 @@
+schema:                            # required
+  format:                          # required
+    openapi: "3.0.0"               # required
+  environment_input_type: "PublicEnvironmentInput"
+  types:                           # required
+    # defined by administrator
+    PublicEnvironmentInput:
+      type: object
+      description: "Input properties for my environment"
+      properties:
+        Name:           # parameter
+          type: string
+          description: |
+            Name of the S3 bucket, DynamoDB table;
+            Defaults to "terraform-state-AWS_ACCOUNT_ID"
+          default: ""
