@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: S3 & DynamoDB for Terraform Backend
+
+Resources:
+#------------------------------------------------------------------------------#
+# S3
+#------------------------------------------------------------------------------#
+  StateBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub terraform-state-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
+#------------------------------------------------------------------------------#
+# DynamoDB
+#------------------------------------------------------------------------------#
+  LockTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "terraform_state_lock"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: "LockID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "LockID"
+          KeyType: "HASH"
